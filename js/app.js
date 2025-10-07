@@ -1,4 +1,3 @@
-// app.js - main JS for system requirements manual
 // Main Application
 class SystemRequirementsManual {
     constructor() {
@@ -42,7 +41,7 @@ class SystemRequirementsManual {
         const moduleItem = document.createElement('li');
         moduleItem.className = 'menu-item';
         
-        const moduleHeader = this.createModuleHeader(module.module);
+        const moduleHeader = this.createModuleHeader(module.module, moduleIndex);
         const submenu = this.createSubmenu(module.submodules, moduleIndex);
         
         moduleItem.appendChild(moduleHeader);
@@ -51,23 +50,70 @@ class SystemRequirementsManual {
         return moduleItem;
     }
 
-    createModuleHeader(moduleName) {
+    createModuleHeader(moduleName, moduleIndex) {
         const moduleHeader = document.createElement('div');
         moduleHeader.className = 'menu-item-header';
+        moduleHeader.dataset.moduleIndex = moduleIndex;
         moduleHeader.innerHTML = `
             <span>${moduleName}</span>
             <i class="fas fa-chevron-right"></i>
         `;
         
-        moduleHeader.addEventListener('click', () => {
-            const icon = moduleHeader.querySelector('i');
-            const submenu = moduleHeader.nextElementSibling;
-            
-            icon.style.transform = icon.style.transform === 'rotate(90deg)' ? 'rotate(0deg)' : 'rotate(90deg)';
-            submenu.classList.toggle('show');
+        moduleHeader.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.handleModuleClick(moduleHeader);
         });
         
         return moduleHeader;
+    }
+
+    handleModuleClick(clickedModuleHeader) {
+        const icon = clickedModuleHeader.querySelector('i');
+        const submenu = clickedModuleHeader.nextElementSibling;
+        const isOpening = !submenu.classList.contains('show');
+        
+        // If we're opening this module, close all others
+        if (isOpening) {
+            this.collapseOtherModules(clickedModuleHeader);
+        }
+        
+        // Toggle current module
+        icon.style.transform = isOpening ? 'rotate(90deg)' : 'rotate(0deg)';
+        submenu.classList.toggle('show');
+        clickedModuleHeader.classList.toggle('active', isOpening);
+    }
+
+    collapseOtherModules(activeModuleHeader) {
+        const allModuleHeaders = document.querySelectorAll('.menu-item-header');
+        
+        allModuleHeaders.forEach(header => {
+            if (header !== activeModuleHeader) {
+                const icon = header.querySelector('i');
+                const submenu = header.nextElementSibling;
+                
+                // Close the module
+                icon.style.transform = 'rotate(0deg)';
+                submenu.classList.remove('show');
+                header.classList.remove('active');
+                
+                // Also close all submenus within this module
+                this.collapseAllSubmenusInModule(submenu);
+            }
+        });
+    }
+
+    collapseAllSubmenusInModule(moduleSubmenu) {
+        const submenuItems = moduleSubmenu.querySelectorAll('.submenu-item');
+        
+        submenuItems.forEach(submenuItem => {
+            const submenuIcon = submenuItem.querySelector('i');
+            const requirementsList = submenuItem.querySelector('.requirement-list');
+            
+            // Close submenu
+            submenuIcon.style.transform = 'rotate(0deg)';
+            requirementsList.classList.remove('show');
+            submenuItem.classList.remove('active');
+        });
     }
 
     createSubmenu(submodules, moduleIndex) {
@@ -94,14 +140,62 @@ class SystemRequirementsManual {
         submoduleItem.appendChild(requirementsList);
         
         submoduleItem.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'I' && !e.target.classList.contains('req-code') && !e.target.classList.contains('req-title')) {
-                const icon = submoduleItem.querySelector('i');
-                icon.style.transform = icon.style.transform === 'rotate(90deg)' ? 'rotate(0deg)' : 'rotate(90deg)';
-                requirementsList.classList.toggle('show');
-            }
+            e.stopPropagation();
+            this.handleSubmoduleClick(submoduleItem, e);
         });
         
         return submoduleItem;
+    }
+
+    handleSubmoduleClick(clickedSubmoduleItem, e) {
+        // Only handle clicks on the submodule header itself, not on requirements
+        if (e.target.tagName !== 'I' && !e.target.classList.contains('req-code') && !e.target.classList.contains('req-title')) {
+            const icon = clickedSubmoduleItem.querySelector('i');
+            const requirementsList = clickedSubmoduleItem.querySelector('.requirement-list');
+            const isOpening = !requirementsList.classList.contains('show');
+            
+            // If we're opening this submodule, close all other submodules in the same module
+            if (isOpening) {
+                this.collapseOtherSubmodules(clickedSubmoduleItem);
+            }
+            
+            // Toggle current submodule
+            icon.style.transform = isOpening ? 'rotate(90deg)' : 'rotate(0deg)';
+            requirementsList.classList.toggle('show');
+            clickedSubmoduleItem.classList.toggle('active', isOpening);
+            
+            // Ensure parent module is open
+            this.ensureParentModuleOpen(clickedSubmoduleItem);
+        }
+    }
+
+    collapseOtherSubmodules(activeSubmoduleItem) {
+        const parentModule = activeSubmoduleItem.closest('.menu-item');
+        const allSubmoduleItems = parentModule.querySelectorAll('.submenu-item');
+        
+        allSubmoduleItems.forEach(submoduleItem => {
+            if (submoduleItem !== activeSubmoduleItem) {
+                const icon = submoduleItem.querySelector('i');
+                const requirementsList = submoduleItem.querySelector('.requirement-list');
+                
+                // Close the submodule
+                icon.style.transform = 'rotate(0deg)';
+                requirementsList.classList.remove('show');
+                submoduleItem.classList.remove('active');
+            }
+        });
+    }
+
+    ensureParentModuleOpen(submoduleItem) {
+        const moduleHeader = submoduleItem.closest('.menu-item').querySelector('.menu-item-header');
+        const moduleSubmenu = moduleHeader.nextElementSibling;
+        
+        // Open parent module if it's closed
+        if (!moduleSubmenu.classList.contains('show')) {
+            moduleHeader.querySelector('i').style.transform = 'rotate(90deg)';
+            moduleSubmenu.classList.add('show');
+            moduleHeader.classList.add('active');
+        }
     }
 
     createRequirementsList(requirements, moduleIndex, submoduleIndex) {
@@ -127,7 +221,8 @@ class SystemRequirementsManual {
             <span class="req-title">${requirement.title.substring(0, 30)}${requirement.title.length > 30 ? '...' : ''}</span>
         `;
         
-        reqItem.addEventListener('click', () => {
+        reqItem.addEventListener('click', (e) => {
+            e.stopPropagation();
             this.handleRequirementClick(reqItem, moduleIndex, submoduleIndex, reqIndex);
         });
         
@@ -153,17 +248,24 @@ class SystemRequirementsManual {
     openParentMenus(reqItem) {
         const submoduleItem = reqItem.closest('.submenu-item');
         const moduleHeader = reqItem.closest('.menu-item').querySelector('.menu-item-header');
-        const submenu = submoduleItem.parentElement;
+        const moduleSubmenu = submoduleItem.parentElement;
         
-        submenu.classList.add('show');
-        submoduleItem.classList.add('active');
+        // Close other modules first
+        this.collapseOtherModules(moduleHeader);
+        
+        // Open current module and submodule
+        moduleSubmenu.classList.add('show');
         moduleHeader.classList.add('active');
         moduleHeader.querySelector('i').style.transform = 'rotate(90deg)';
         
-        // Open requirements list
+        // Open requirements list and submodule
         const requirementsList = submoduleItem.querySelector('.requirement-list');
         requirementsList.classList.add('show');
+        submoduleItem.classList.add('active');
         submoduleItem.querySelector('i').style.transform = 'rotate(90deg)';
+        
+        // Close other submodules in the same module
+        this.collapseOtherSubmodules(submoduleItem);
     }
 
     loadRequirement(moduleIndex, submoduleIndex, reqIndex) {

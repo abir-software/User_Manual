@@ -417,3 +417,39 @@ body {
 .sidebar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
 }
+
+/* Enhanced transition for smoother collapsing/expanding */
+.menu-item-header,
+.submenu-item,
+.requirement-item {
+    transition: all 0.3s ease;
+}
+
+/* Improved visual feedback for active states */
+.menu-item-header.active {
+    background-color: var(--secondary-color);
+    box-shadow: inset 3px 0 0 var(--accent-color);
+}
+
+.submenu-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left-color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* Smooth transitions for submenus */
+.submenu,
+.requirement-list {
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects */
+.menu-item-header:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+
+.submenu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(2px);
+}
