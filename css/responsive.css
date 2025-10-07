@@ -1,6 +1,150 @@
 /* responsive.css - responsive styles for system requirements manual */
+/* Tablet Devices */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 280px;
+    }
+    
+    .content-header h2 {
+        font-size: 1.6rem;
+    }
+    
+    .search-box {
+        width: 220px;
+    }
+}
+
+/* Mobile Devices */
 @media (max-width: 768px) {
-    body {
-        font-size: 16px;
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .content-header {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .content-header h2 {
+        font-size: 1.4rem;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .search-box {
+        width: 100%;
+        order: 3;
+    }
+    
+    .requirement-content {
+        padding: 20px;
+    }
+    
+    .requirement-title h3 {
+        font-size: 1.2rem;
+    }
+    
+    .requirement-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .meta-item {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    /* Overlay when sidebar is open */
+    .sidebar.open + .main-content::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .content-header {
+        margin-bottom: 15px;
+    }
+    
+    .content-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .breadcrumb {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+    
+    .requirement-content {
+        padding: 15px;
+    }
+    
+    .requirement-title h3 {
+        font-size: 1.1rem;
+    }
+    
+    .empty-state {
+        padding: 40px 15px;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .content-header,
+    .breadcrumb,
+    .menu-toggle {
+        display: none;
+    }
+    
+    .requirement-content {
+        box-shadow: none;
+        padding: 0;
+    }
+    
+    .developer-section {
+        display: none;
     }
 }
