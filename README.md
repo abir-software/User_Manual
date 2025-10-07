@@ -27,5 +27,5 @@ system-requirements-manual/
 │ └── icons/
 └── README.md
 
-
+![alt text](image.png)
 
