@@ -341,3 +341,4 @@ class SystemRequirementsManual {
 document.addEventListener('DOMContentLoaded', () => {
     new SystemRequirementsManual();
 });
+

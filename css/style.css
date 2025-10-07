@@ -453,3 +453,86 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateX(2px);
 }
+
+
+/* Enhanced Mobile Styles */
+@media (max-width: 768px) {
+    /* Improved overlay */
+    .main-content::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+    
+    .sidebar.open ~ .main-content::before {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    
+    /* Prevent body scroll when sidebar is open */
+    body.sidebar-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Improved sidebar animation */
+    .sidebar {
+        z-index: 1000;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    /* Better menu toggle button */
+    .menu-toggle {
+        background: var(--secondary-color);
+        color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-light);
+        transition: all 0.3s ease;
+    }
+    
+    .menu-toggle:hover {
+        background: var(--primary-color);
+        transform: scale(1.05);
+    }
+    
+    /* Adjust content spacing */
+    .content-header {
+        padding: 10px 0;
+    }
+}
+
+/* Very small devices */
+@media (max-width: 360px) {
+    .sidebar {
+        width: 100%;
+    }
+    
+    .content-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .search-box input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}

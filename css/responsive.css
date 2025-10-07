@@ -1,4 +1,5 @@
 /* responsive.css - responsive styles for system requirements manual */
+
 /* Tablet Devices */
 @media (max-width: 1024px) {
     :root {
@@ -20,6 +21,7 @@
         transform: translateX(-100%);
         width: 280px;
         box-shadow: var(--shadow-medium);
+        transition: transform 0.3s ease;
     }
     
     .sidebar.open {
@@ -29,6 +31,7 @@
     .main-content {
         margin-left: 0;
         padding: 15px;
+        transition: margin-left 0.3s ease;
     }
     
     .menu-toggle {
@@ -69,8 +72,8 @@
         justify-content: flex-start;
     }
     
-    /* Overlay when sidebar is open */
-    .sidebar.open + .main-content::after {
+    /* Fixed Overlay when sidebar is open */
+    .sidebar.open ~ .main-content::before {
         content: '';
         position: fixed;
         top: 0;
@@ -79,6 +82,12 @@
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;
+        pointer-events: auto;
+    }
+    
+    /* Prevent body scroll when sidebar is open */
+    body.sidebar-open {
+        overflow: hidden;
     }
 }
 
@@ -119,6 +128,11 @@
     
     .empty-state h3 {
         font-size: 1.2rem;
+    }
+    
+    .sidebar {
+        width: 100%;
+        max-width: 320px;
     }
 }
 
