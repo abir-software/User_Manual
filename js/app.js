@@ -7,6 +7,7 @@ class SystemRequirementsManual {
         this.breadcrumb = document.getElementById('breadcrumb');
         this.menuToggle = document.getElementById('menuToggle');
         this.sidebar = document.getElementById('sidebar');
+        this.mobileOverlay = document.getElementById('mobileOverlay');
         
         this.init();
     }
@@ -130,7 +131,7 @@ class SystemRequirementsManual {
 
     createSubmoduleItem(submodule, moduleIndex, submoduleIndex) {
         const submoduleItem = document.createElement('li');
-        submoduleItem.className = 'submodule-item';
+        submoduleItem.className = 'submenu-item';
         submoduleItem.innerHTML = `
             <span>${submodule.name}</span>
             <i class="fas fa-chevron-right"></i>
@@ -171,7 +172,7 @@ class SystemRequirementsManual {
 
     collapseOtherSubmodules(activeSubmoduleItem) {
         const parentModule = activeSubmoduleItem.closest('.menu-item');
-        const allSubmoduleItems = parentModule.querySelectorAll('.submenu-item');
+        const allSubmoduleItems = parentModule.querySelectorAll('.submodule-item');
         
         allSubmoduleItems.forEach(submoduleItem => {
             if (submoduleItem !== activeSubmoduleItem) {
@@ -240,8 +241,8 @@ class SystemRequirementsManual {
         this.openParentMenus(reqItem);
         
         // Close sidebar on mobile after selection
-        if (window.innerWidth <= 768) {
-            this.sidebar.classList.remove('open');
+        if (this.isMobile()) {
+            this.closeSidebar();
         }
     }
 
@@ -311,18 +312,47 @@ class SystemRequirementsManual {
         `;
     }
 
+    // Mobile-specific methods
+    isMobile() {
+        return window.innerWidth <= 768;
+    }
+
+    toggleSidebar() {
+        this.sidebar.classList.toggle('open');
+        this.mobileOverlay.classList.toggle('active');
+        document.body.classList.toggle('sidebar-open', this.sidebar.classList.contains('open'));
+    }
+
+    closeSidebar() {
+        this.sidebar.classList.remove('open');
+        this.mobileOverlay.classList.remove('active');
+        document.body.classList.remove('sidebar-open');
+    }
+
+    openSidebar() {
+        this.sidebar.classList.add('open');
+        this.mobileOverlay.classList.add('active');
+        document.body.classList.add('sidebar-open');
+    }
+
     bindEvents() {
-        this.menuToggle.addEventListener('click', () => {
-            this.sidebar.classList.toggle('open');
+        // Menu toggle
+        this.menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleSidebar();
         });
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768 && 
-                this.sidebar.classList.contains('open') &&
-                !this.sidebar.contains(e.target) &&
-                e.target !== this.menuToggle) {
-                this.sidebar.classList.remove('open');
+        // Close sidebar when clicking on overlay
+        this.mobileOverlay.addEventListener('click', () => {
+            this.closeSidebar();
+        });
+
+        // Close sidebar when clicking on a requirement (handled in requirement click)
+        
+        // Handle escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.sidebar.classList.contains('open')) {
+                this.closeSidebar();
             }
         });
 
@@ -332,7 +362,7 @@ class SystemRequirementsManual {
 
     handleResize() {
         if (window.innerWidth > 768) {
-            this.sidebar.classList.remove('open');
+            this.closeSidebar();
         }
     }
 }
@@ -341,4 +371,3 @@ class SystemRequirementsManual {
 document.addEventListener('DOMContentLoaded', () => {
     new SystemRequirementsManual();
 });
-
