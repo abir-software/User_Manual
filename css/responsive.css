@@ -1,0 +1,6 @@
+/* responsive.css - responsive styles for system requirements manual */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+}
