@@ -1,12 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-    </head>
-    <body>
-        <script src="index.js"></script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Requirements Manual</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book-open"></i> System Manual</h3>
+        </div>
+        <ul class="sidebar-menu" id="menu">
+            <!-- Menu items will be populated by JavaScript -->
+        </ul>
+        
+        <!-- Developer Section -->
+        <div class="developer-section">
+            <p>Developed by</p>
+            <a href="https://www.linkedin.com/in/abirhassan2/" target="_blank" class="developer-link">
+                <i class="fab fa-linkedin"></i> Md Abir Hassan
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="content-header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 id="contentTitle">System Requirements Manual</h2>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search requirements...">
+            </div>
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <span>Home</span>
+        </div>
+
+        <div class="requirement-content" id="contentArea">
+            <div class="empty-state">
+                <i class="fas fa-file-alt"></i>
+                <h3>No Requirement Selected</h3>
+                <p>Select a requirement from the left menu to view its details</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/data.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/app.js"></script>
+</body>
 </html>
