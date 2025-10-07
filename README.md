@@ -29,3 +29,4 @@ system-requirements-manual/
 
 ![alt text](image.png)
 
+<img width="1917" height="908" alt="image" src="https://github.com/user-attachments/assets/425b904a-9dfc-4d1c-a2e9-1f286d1c7896" />
