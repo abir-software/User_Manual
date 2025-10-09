@@ -293,7 +293,8 @@ class SystemRequirementsManual {
 
     updateContent(module, submodule, requirement) {
         let pdfPreview = '';
-        // Show PDF preview for Employee Dashboards requirement
+
+        // Show PDF preview for Employee Dashboard (REQ-HR-001)
         if (requirement.code === 'REQ-HR-001') {
             const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard.pdf'.replace(/\\/g, '/');
             pdfPreview = `
@@ -306,6 +307,63 @@ class SystemRequirementsManual {
                 </div>
             `;
         }
+
+        // Show PDF preview for Employee Profile Management (REQ-HR-002)
+        if (requirement.code === 'REQ-HR-002') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Employee Profile Management User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                    <div style="margin-top:8px;">
+                        <a href="${pdfPath}" download>Download PDF</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show PDF preview for attachments (REQ-HR-003)
+        if (requirement.code === 'REQ-HR-003') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Employee Profile Management User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                    <div style="margin-top:8px;">
+                        <a href="${pdfPath}" download>Download PDF</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show PDF preview for joining and departure management. (REQ-HR-004)
+        if (requirement.code === 'REQ-HR-004') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Employee Profile Management User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                    <div style="margin-top:8px;">
+                        <a href="${pdfPath}" download>Download PDF</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show PDF preview for Office Item Requisitions (REQ-HR-005)
+        if (requirement.code === 'REQ-HR-005') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Employee Profile Management User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                    <div style="margin-top:8px;">
+                        <a href="${pdfPath}" download>Download PDF</a>
+                    </div>
+                </div>
+            `;
+        }
+
         this.contentArea.innerHTML = `
             <div class="requirement-title">
                 <h3>${requirement.code}: ${requirement.title}</h3>
