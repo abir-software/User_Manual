@@ -301,9 +301,6 @@ class SystemRequirementsManual {
                 <div class="pdf-preview">
                     <h4>Employee Dashboard User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                    <div style="margin-top:8px;">
-                        <a href="${pdfPath}" download>Download PDF</a>
-                    </div>
                 </div>
             `;
         }
@@ -315,9 +312,6 @@ class SystemRequirementsManual {
                 <div class="pdf-preview">
                     <h4>Employee Profile Management User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                    <div style="margin-top:8px;">
-                        <a href="${pdfPath}" download>Download PDF</a>
-                    </div>
                 </div>
             `;
         }
@@ -329,9 +323,6 @@ class SystemRequirementsManual {
                 <div class="pdf-preview">
                     <h4>Employee Profile Management User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                    <div style="margin-top:8px;">
-                        <a href="${pdfPath}" download>Download PDF</a>
-                    </div>
                 </div>
             `;
         }
@@ -343,9 +334,6 @@ class SystemRequirementsManual {
                 <div class="pdf-preview">
                     <h4>Employee Profile Management User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                    <div style="margin-top:8px;">
-                        <a href="${pdfPath}" download>Download PDF</a>
-                    </div>
                 </div>
             `;
         }
@@ -357,9 +345,6 @@ class SystemRequirementsManual {
                 <div class="pdf-preview">
                     <h4>Employee Profile Management User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                    <div style="margin-top:8px;">
-                        <a href="${pdfPath}" download>Download PDF</a>
-                    </div>
                 </div>
             `;
         }
