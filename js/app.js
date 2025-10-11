@@ -5,6 +5,11 @@ const requirementManualFiles = {
     'REQ-HR-001': 'assets/manuals/employee-dashboard.html'
 };
 
+// Map REQ-HR-003 to Attachments manual
+requirementManualFiles['REQ-HR-003'] = 'assets/manuals/Attachments.html';
+// Map REQ-HR-002 to Attachments manual as requested
+requirementManualFiles['REQ-HR-002'] = 'assets/manuals/Attachments.html';
+
 // Simple in-memory cache for loaded manual HTML to avoid repeated fetches
 const manualCache = new Map();
 
@@ -42,6 +47,9 @@ function loadManualFromLocal(manualFile) {
 const skipLocalStorageFor = new Set([
     'assets/manuals/employee-dashboard.html'
 ]);
+
+// Also skip localStorage caching for Attachments manual so edits show immediately
++skipLocalStorageFor.add('assets/manuals/Attachments.html');
 
 // When a requirement has a mapped manual file, we'll fetch and inject it
 // into the `.manual-container` element inside the requirement template.
@@ -464,8 +472,8 @@ class SystemRequirementsManual {
                         });
                 };
 
-                // Initial load: for REQ-HR-001 force a fresh fetch & inject so edits on disk show immediately
-                if (requirement.code === 'REQ-HR-001') {
+                // Initial load: for REQ-HR-001, REQ-HR-002 and REQ-HR-003 force a fresh fetch & inject so edits on disk show immediately
+                if (requirement.code === 'REQ-HR-001' || requirement.code === 'REQ-HR-002' || requirement.code === 'REQ-HR-003') {
                     fetch(manualFile)
                         .then(res => {
                             if (!res.ok) throw new Error('Manual not found');
@@ -478,8 +486,8 @@ class SystemRequirementsManual {
                             contentHolder.innerHTML = html;
                         })
                         .catch(err => {
-                            console.error('Failed to load REQ-HR-001 manual:', err);
-                            contentHolder.innerHTML = '<p>Unable to load the Employee Dashboard manual. Please contact HR.</p>';
+                            console.error('Failed to load manual (forced fetch):', err);
+                            contentHolder.innerHTML = '<p>Unable to load the manual. Please contact HR.</p>';
                         });
                 } else {
                     // Default load (may use cache/localStorage)
