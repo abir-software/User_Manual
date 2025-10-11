@@ -49,7 +49,7 @@ const skipLocalStorageFor = new Set([
 ]);
 
 // Also skip localStorage caching for Attachments manual so edits show immediately
-+skipLocalStorageFor.add('assets/manuals/Attachments.html');
+skipLocalStorageFor.add('assets/manuals/Attachments.html');
 
 // When a requirement has a mapped manual file, we'll fetch and inject it
 // into the `.manual-container` element inside the requirement template.
@@ -419,16 +419,8 @@ class SystemRequirementsManual {
         if (manualFile) {
             const container = this.contentArea.querySelector('.manual-container');
             if (container) {
-                // Add simple controls above the manual — only Print (inline display)
-                const controls = document.createElement('div');
-                controls.className = 'manual-controls';
-                controls.innerHTML = `
-                    <button class="btn-refresh-manual">Refresh</button>
-                    <button class="btn-print-manual">Print</button>
-                `;
+                // Create content holder for the manual (no extra controls)
                 container.innerHTML = '';
-                container.appendChild(controls);
-
                 const contentHolder = document.createElement('div');
                 contentHolder.className = 'manual-content-holder';
                 contentHolder.innerHTML = '<p>Loading manual...</p>';
@@ -472,8 +464,8 @@ class SystemRequirementsManual {
                         });
                 };
 
-                // Initial load: for REQ-HR-001, REQ-HR-002 and REQ-HR-003 force a fresh fetch & inject so edits on disk show immediately
-                if (requirement.code === 'REQ-HR-001' || requirement.code === 'REQ-HR-002' || requirement.code === 'REQ-HR-003') {
+                // Initial load: for REQ-HR-001 and REQ-HR-003 force a fresh fetch & inject so edits on disk show immediately
+                if (requirement.code === 'REQ-HR-001' || requirement.code === 'REQ-HR-003') {
                     fetch(manualFile)
                         .then(res => {
                             if (!res.ok) throw new Error('Manual not found');
@@ -494,26 +486,7 @@ class SystemRequirementsManual {
                     loadAndDisplay(false);
                 }
 
-                // Wire up controls (Refresh + Print)
-                const btnRefresh = controls.querySelector('.btn-refresh-manual');
-                const btnPrint = controls.querySelector('.btn-print-manual');
-
-                btnRefresh.addEventListener('click', () => {
-                    // Force a network fetch and update caches/display
-                    loadAndDisplay(true);
-                });
-
-                btnPrint.addEventListener('click', () => {
-                    // Print the manual content (open a new window with the content for printing)
-                    const html = manualCache.get(manualFile) || contentHolder.innerHTML;
-                    const printWindow = window.open('', '_blank');
-                    printWindow.document.open();
-                    printWindow.document.write(`<!doctype html><html><head><title>Print Manual</title></head><body>${html}</body></html>`);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    // Give the new window a short moment to render before printing
-                    setTimeout(() => { printWindow.print(); }, 300);
-                });
+                // No UI controls (Refresh/Print). Manual content displays inline only.
 
             }
 
