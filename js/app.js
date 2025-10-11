@@ -1,3 +1,51 @@
+// Map requirement codes to external manual HTML files. Add entries here for
+// any requirement that should show a full manual/article inside the
+// requirement content area.
+const requirementManualFiles = {
+    'REQ-HR-001': 'assets/manuals/employee-dashboard.html'
+};
+
+// Simple in-memory cache for loaded manual HTML to avoid repeated fetches
+const manualCache = new Map();
+
+// localStorage helpers for persistent manual caching with TTL (24 hours)
+const MANUAL_CACHE_PREFIX = 'manual_html__';
+const MANUAL_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function saveManualToLocal(manualFile, html) {
+    try {
+        const payload = { ts: Date.now(), html };
+        localStorage.setItem(MANUAL_CACHE_PREFIX + manualFile, JSON.stringify(payload));
+    } catch (e) {
+        console.warn('Could not save manual to localStorage', e);
+    }
+}
+
+function loadManualFromLocal(manualFile) {
+    try {
+        const raw = localStorage.getItem(MANUAL_CACHE_PREFIX + manualFile);
+        if (!raw) return null;
+        const payload = JSON.parse(raw);
+        if (!payload || !payload.ts || !payload.html) return null;
+        if ((Date.now() - payload.ts) > MANUAL_CACHE_TTL_MS) {
+            localStorage.removeItem(MANUAL_CACHE_PREFIX + manualFile);
+            return null;
+        }
+        return payload.html;
+    } catch (e) {
+        console.warn('Could not read manual from localStorage', e);
+        return null;
+    }
+}
+
+// Files we prefer to always fetch from network (no localStorage persist)
+const skipLocalStorageFor = new Set([
+    'assets/manuals/employee-dashboard.html'
+]);
+
+// When a requirement has a mapped manual file, we'll fetch and inject it
+// into the `.manual-container` element inside the requirement template.
+
 // Main Application
 class SystemRequirementsManual {
     constructor() {
@@ -294,19 +342,16 @@ class SystemRequirementsManual {
     updateContent(module, submodule, requirement) {
         let pdfPreview = '';
 
-        // Show PDF preview for Employee Dashboard (REQ-HR-001)
-        if (requirement.code === 'REQ-HR-001') {
-            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard.pdf'.replace(/\\/g, '/');
+        // If this requirement has an external manual file mapped, show a
+        // placeholder that will be filled after rendering the template.
+        const manualFile = requirementManualFiles[requirement.code];
+        if (manualFile) {
             pdfPreview = `
-                <div class="pdf-preview">
-                    <h4>Employee Dashboard User Manual</h4>
-                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                <div class="manual-container">
+                    <p>Loading manual...</p>
                 </div>
             `;
-        }
-
-        // Show PDF preview for Employee Profile Management (REQ-HR-002)
-        if (requirement.code === 'REQ-HR-002') {
+        } else if (requirement.code === 'REQ-HR-002') {
             const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
             pdfPreview = `
                 <div class="pdf-preview">
@@ -314,41 +359,34 @@ class SystemRequirementsManual {
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
                 </div>
             `;
-        }
-
-        // Show PDF preview for attachments (REQ-HR-003)
-        if (requirement.code === 'REQ-HR-003') {
+        } else if (requirement.code === 'REQ-HR-003') {
             const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
             pdfPreview = `
                 <div class="pdf-preview">
-                    <h4>Employee Profile Management User Manual</h4>
+                    <h4>Attachments - User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                </div>
+            `;
+        } else if (requirement.code === 'REQ-HR-004') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Joining & Departure Management - User Manual</h4>
+                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
+                </div>
+            `;
+        } else if (requirement.code === 'REQ-HR-005') {
+            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
+            pdfPreview = `
+                <div class="pdf-preview">
+                    <h4>Office Item Requisitions - User Manual</h4>
                     <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
                 </div>
             `;
         }
 
-        // Show PDF preview for joining and departure management. (REQ-HR-004)
-        if (requirement.code === 'REQ-HR-004') {
-            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
-            pdfPreview = `
-                <div class="pdf-preview">
-                    <h4>Employee Profile Management User Manual</h4>
-                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                </div>
-            `;
-        }
-
-        // Show PDF preview for Office Item Requisitions (REQ-HR-005)
-        if (requirement.code === 'REQ-HR-005') {
-            const pdfPath = 'assets/pdf/User Manual/Human Resource Management HR Module/1. Employee Dashboard copy.pdf'.replace(/\\/g, '/');
-            pdfPreview = `
-                <div class="pdf-preview">
-                    <h4>Employee Profile Management User Manual</h4>
-                    <embed src="${pdfPath}" type="application/pdf" width="100%" height="1000px" style="border:1px solid #ccc;" />
-                </div>
-            `;
-        }
-
+        // Render the main template and insert either the manual placeholder or
+        // the PDF preview as needed.
         this.contentArea.innerHTML = `
             <div class="requirement-title">
                 <h3>${requirement.code}: ${requirement.title}</h3>
@@ -368,6 +406,110 @@ class SystemRequirementsManual {
                 </div>
             </div>
         `;
+
+        // If a manual file is mapped, fetch and inject it into .manual-container
+        if (manualFile) {
+            const container = this.contentArea.querySelector('.manual-container');
+            if (container) {
+                // Add simple controls above the manual — only Print (inline display)
+                const controls = document.createElement('div');
+                controls.className = 'manual-controls';
+                controls.innerHTML = `
+                    <button class="btn-refresh-manual">Refresh</button>
+                    <button class="btn-print-manual">Print</button>
+                `;
+                container.innerHTML = '';
+                container.appendChild(controls);
+
+                const contentHolder = document.createElement('div');
+                contentHolder.className = 'manual-content-holder';
+                contentHolder.innerHTML = '<p>Loading manual...</p>';
+                container.appendChild(contentHolder);
+
+                const loadAndDisplay = (forceNetwork = false) => {
+                    // If the file is flagged to skip localStorage, don't read/write localStorage
+                    const useLocalStorage = !skipLocalStorageFor.has(manualFile);
+
+                    if (!forceNetwork && useLocalStorage) {
+                        const localHtml = loadManualFromLocal(manualFile);
+                        if (localHtml) {
+                            manualCache.set(manualFile, localHtml);
+                            contentHolder.innerHTML = localHtml;
+                            return;
+                        }
+                    }
+
+                    // If file is set to skip local caching, avoid using in-memory manualCache
+                    if (!forceNetwork && !skipLocalStorageFor.has(manualFile) && manualCache.has(manualFile)) {
+                        contentHolder.innerHTML = manualCache.get(manualFile);
+                        return;
+                    }
+
+                    // Fetch from network and cache appropriately
+                    fetch(manualFile)
+                        .then(res => {
+                            if (!res.ok) throw new Error('Manual not found');
+                            return res.text();
+                        })
+                        .then(html => {
+                            manualCache.set(manualFile, html);
+                            if (!skipLocalStorageFor.has(manualFile)) {
+                                try { saveManualToLocal(manualFile, html); } catch (e) { /* ignore */ }
+                            }
+                            contentHolder.innerHTML = html;
+                        })
+                        .catch(err => {
+                            console.error('Failed to load manual:', err);
+                            contentHolder.innerHTML = '<p>Unable to load the manual. Please contact HR.</p>';
+                        });
+                };
+
+                // Initial load: for REQ-HR-001 force a fresh fetch & inject so edits on disk show immediately
+                if (requirement.code === 'REQ-HR-001') {
+                    fetch(manualFile)
+                        .then(res => {
+                            if (!res.ok) throw new Error('Manual not found');
+                            return res.text();
+                        })
+                        .then(html => {
+                            // update in-memory cache as well
+                            manualCache.set(manualFile, html);
+                            // skip localStorage for this file by design
+                            contentHolder.innerHTML = html;
+                        })
+                        .catch(err => {
+                            console.error('Failed to load REQ-HR-001 manual:', err);
+                            contentHolder.innerHTML = '<p>Unable to load the Employee Dashboard manual. Please contact HR.</p>';
+                        });
+                } else {
+                    // Default load (may use cache/localStorage)
+                    loadAndDisplay(false);
+                }
+
+                // Wire up controls (Refresh + Print)
+                const btnRefresh = controls.querySelector('.btn-refresh-manual');
+                const btnPrint = controls.querySelector('.btn-print-manual');
+
+                btnRefresh.addEventListener('click', () => {
+                    // Force a network fetch and update caches/display
+                    loadAndDisplay(true);
+                });
+
+                btnPrint.addEventListener('click', () => {
+                    // Print the manual content (open a new window with the content for printing)
+                    const html = manualCache.get(manualFile) || contentHolder.innerHTML;
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.open();
+                    printWindow.document.write(`<!doctype html><html><head><title>Print Manual</title></head><body>${html}</body></html>`);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    // Give the new window a short moment to render before printing
+                    setTimeout(() => { printWindow.print(); }, 300);
+                });
+
+            }
+
+        }
     }
 
     // Mobile-specific methods

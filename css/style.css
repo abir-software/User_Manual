@@ -315,6 +315,35 @@ body {
     gap: 15px;
 }
 
+/* Manual specific styles */
+.manual-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.manual-controls .btn-open-manual,
+.manual-controls .btn-print-manual {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.manual-content-holder {
+    max-width: 100%;
+}
+
+.manual-content-holder img,
+.manual-content-holder .guide-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
 .meta-item {
     display: flex;
     align-items: center;
@@ -418,6 +447,57 @@ body {
 .breadcrumb .separator {
     margin: 0 8px;
     color: #999;
+}
+
+/* Manual section styling */
+.manual-section {
+    padding: 20px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: var(--shadow-light);
+    margin: 10px 0 20px 0;
+    color: #333;
+}
+
+.manual-section h1 {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+}
+
+.manual-section h2 {
+    font-size: 1.1rem;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.manual-section p, .manual-section ul, .manual-section ol {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.guide-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0 14px 0;
+    border-radius: 4px;
+    box-shadow: var(--shadow-light);
+}
+
+/* Make manual content fit nicely inside requirement content area */
+.requirement-content .manual-section {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+@media (max-width: 768px) {
+    .manual-section h1 { font-size: 1.3rem; }
+    .manual-section h2 { font-size: 1rem; }
+    .manual-section { padding: 12px; }
 }
 
 /* Scrollbar Styling */
